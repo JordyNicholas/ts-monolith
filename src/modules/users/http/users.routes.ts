@@ -1,4 +1,6 @@
-export const usersRoutes = async (app: any) => {
+import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
+
+export const usersRoutes: FastifyPluginAsyncZod = async (app: any) => {
   app.post(
     '/register',
     {
@@ -21,11 +23,9 @@ export const usersRoutes = async (app: any) => {
 
       const user = await reply.registerUserService.execute({ email, password });
 
-      return reply
-        .status(200)
-        .send({
-          token: reply.jwtSign({ role: 'user' }, { sign: { sub: user.id, expiresIn: '1d' } }),
-        });
+      return reply.status(200).send({
+        token: reply.jwtSign({ role: 'user' }, { sign: { sub: user.id, expiresIn: '1d' } }),
+      });
     },
   );
 };
