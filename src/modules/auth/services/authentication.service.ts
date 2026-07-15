@@ -1,8 +1,7 @@
-// src/modules/auth/services/authenticate.service.ts
 import { z } from 'zod';
-import { loginBodySchema } from '../../public/controllers/auth/dtos/login.dto.js';
 import { IUsersRepository } from '../../users/repositories/users-repository.interface.js';
 import { ErrorHandler } from '../../../shared/handlers/error.js';
+import { loginBodySchema } from '../http/dtos/login.dto.js';
 
 type LoginRequest = z.infer<typeof loginBodySchema>;
 
@@ -17,7 +16,7 @@ export class AuthenticateService {
     }
 
     // In a real application, compare using bcrypt
-    const passwordMatches = password === user.password;
+    const passwordMatches: boolean = password === user.password;
 
     if (!passwordMatches) {
       throw new ErrorHandler('Invalid credentials', 401);

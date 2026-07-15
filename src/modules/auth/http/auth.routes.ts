@@ -1,7 +1,7 @@
 // src/modules/auth/controllers/auth.routes.ts
 import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
-import { loginBodySchema, loginResponseSchema } from '../../public/controllers/auth/dtos/login.dto.js';
 import { makeAuthenticateService } from '../factories/make-authenticate-service.js';
+import { loginBodySchema, loginResponseSchema } from './dtos/login.dto.js';
 
 export const authRoutes: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -22,7 +22,7 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
 
       const token = await reply.jwtSign(
         { role: 'user' },
-        { sign: { sub: user.id, expiresIn: '1d' } }
+        { sign: { sub: user.id, expiresIn: '1d' } },
       );
 
       return reply.status(200).send({
@@ -32,6 +32,6 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
           name: user.name,
         },
       });
-    }
+    },
   );
 };
