@@ -1,0 +1,8 @@
+node_modules
+# Keep environment variables out of version control
+.env
+# Keep all generated files out of version control
+.vscode
+
+# Ignore locally generated Prisma client
+src/shared/infra/database/client/

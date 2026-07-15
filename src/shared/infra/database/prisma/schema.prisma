@@ -1,0 +1,20 @@
+generator client {
+  provider      = "prisma-client"
+  // Generates the engine locally into src/shared/infra/database/client
+  output        = "../client"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Example model to validate type generation
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  name String @unique
+  password String
+
+  @@map("users")
+}
