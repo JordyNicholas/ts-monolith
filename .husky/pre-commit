@@ -1,5 +1,5 @@
 echo "🔍 Running Type Check..."
-npx tsc --noEmit
+npm run typecheck
 
 echo "💅 Formatting Staged Files..."
-npx lint-staged
+npm run lint:staged
