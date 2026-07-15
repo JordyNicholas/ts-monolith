@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running Type Check..."
+npx tsc --noEmit
+
+echo "💅 Formatting Staged Files..."
+npx lint-staged
