@@ -1,8 +1,8 @@
-import z from 'zod';
-import { AppError } from '../../../shared/core/errors/AppError.js';
-import { registerBodySchema } from '../http/dtos/register.dto.js';
-import { IUsersRepository } from '../repositories/users-repository.interface.js';
-import { IHashProvider } from '../../../shared/providers/cryptography/HashProvider.interface.js';
+import { AppError } from "@/shared/core/errors/AppError.js";
+import { IHashProvider } from "@/shared/providers/cryptography/HashProvider.interface.js";
+import z from "zod";
+import { registerBodySchema } from "../http/dtos/register.dto.js";
+import { IUsersRepository } from "../repositories/users-repository.interface.js";
 
 type RegisterUserRequest = z.infer<typeof registerBodySchema>;
 
@@ -13,7 +13,7 @@ export class RegisterUserService {
     const userExists = await this.usersRepository.findByEmail(email);
 
     if (userExists) {
-      throw new AppError('User already exists', 409);
+      throw new AppError('User already exists');
     }
 
     // Salt and hash the password with a cost factor of 12

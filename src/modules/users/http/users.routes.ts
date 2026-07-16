@@ -1,31 +1,34 @@
-import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
+// src/modules/users/http/users.routes.ts
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { makeRegisterUserService } from '../factories/makeRegisterUserService.js';
+import { registerBodySchema, registerResponseSchema } from './dtos/register.dto.js';
 
-export const usersRoutes: FastifyPluginAsyncZod = async (app: any) => {
-  app.post(
-    '/register',
+export async function usersRoutes(app: FastifyInstance) {
+  // Bind the Zod Type Provider to this specific route scope
+  const typedApp = app.withTypeProvider<ZodTypeProvider>();
+
+  typedApp.post(
+    '/',
     {
       schema: {
-        body: {
-          type: 'object',
-          properties: {
-            email: { type: 'string', format: 'email' },
-            password: { type: 'string', minLength: 8 },
-          },
-          required: ['email', 'password'],
-        },
+        body: registerBodySchema,
         response: {
-          200: { type: 'object', properties: { token: { type: 'string' } } },
+          201: registerResponseSchema,
         },
       },
     },
-    async (request: any, reply: any) => {
-      const { email, password } = request.body;
+    async (request, reply) => {
+      const { email, name, password } = request.body;
 
-      const user = await reply.registerUserService.execute({ email, password });
+      const registerUserService = makeRegisterUserService();
+      const user = await registerUserService.execute({ email, name, password });
 
-      return reply.status(200).send({
-        token: reply.jwtSign({ role: 'user' }, { sign: { sub: user.id, expiresIn: '1d' } }),
+      return reply.status(201).send({
+        id: user.id,
+        email: user.email,
+        name: user.name,
       });
-    },
+    }
   );
-};
+}

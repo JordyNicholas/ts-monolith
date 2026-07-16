@@ -6,7 +6,7 @@ export const registerBodySchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
-export const createUserResponseSchema = z.object({
+export const registerResponseSchema = z.object({
   id: z.uuid(),
   email: z.email(),
   name: z.string()

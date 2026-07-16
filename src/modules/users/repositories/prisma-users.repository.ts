@@ -1,5 +1,5 @@
 // src/modules/users/repositories/prisma-users-repository.ts
-import { Prisma, PrismaClient } from  '../../../shared/infra/database/client/client.js';
+import { Prisma, PrismaClient } from  '@/shared/infra/database/client/client.js';
 import { IUsersRepository } from './users-repository.interface.js';
 
 export class PrismaUsersRepository implements IUsersRepository {

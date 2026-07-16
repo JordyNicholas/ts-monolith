@@ -1,7 +1,8 @@
 import { AppError } from './AppError.js';
 
 export class UnauthorizedError extends AppError {
-  constructor(message = 'Invalid credentials') {
-    super(message, 401);
+  constructor(public readonly message = 'Unauthorised access.') {
+    super(message);
+    this.name = 'UnauthorizedError';
   }
 }

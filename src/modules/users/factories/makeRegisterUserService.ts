@@ -1,7 +1,7 @@
-import { prisma } from '../../../shared/infra/database/prisma.js';
-import { BcryptHashProvider } from '../../../shared/providers/cryptography/BcryptHashProvider.js';
-import { PrismaUsersRepository } from '../repositories/prisma-users.repository.js';
-import { RegisterUserService } from '../services/register-user.service.js';
+import { prisma } from "@/shared/infra/database/prisma.js";
+import { BcryptHashProvider } from "@/shared/providers/cryptography/BcryptHashProvider.js";
+import { PrismaUsersRepository } from "../repositories/prisma-users.repository.js";
+import { RegisterUserService } from "../services/register-user.service.js";
 
 export function makeRegisterUserService() {
   const usersRepository = new PrismaUsersRepository(prisma);

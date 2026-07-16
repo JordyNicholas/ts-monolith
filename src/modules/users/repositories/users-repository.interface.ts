@@ -1,4 +1,4 @@
-import { Prisma, User } from '../../../shared/infra/database/client/client.js';
+import { Prisma, User } from '@/shared/infra/database/client/client.js';
 
 export interface IUsersRepository {
   findByEmail(email: string): Promise<User | null>;

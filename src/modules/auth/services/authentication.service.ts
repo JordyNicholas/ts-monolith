@@ -1,10 +1,11 @@
+import { IUsersRepository } from "@/modules/users/repositories/users-repository.interface.js";
+import { UnauthorizedError } from "@/shared/core/errors/UnauthorizedError.js";
+import { User } from "@/shared/infra/database/client/client.js";
+import { IHashProvider } from "@/shared/providers/cryptography/HashProvider.interface.js";
+import { ITokenProvider } from "@/shared/providers/token/TokenProvider.interface.js";
 import z from "zod";
-import { UnauthorizedError } from "../../../shared/core/errors/UnauthorizedError.js";
-import { User } from "../../../shared/infra/database/client/client.js";
-import { IHashProvider } from "../../../shared/providers/cryptography/HashProvider.interface.js";
-import { ITokenProvider } from "../../../shared/providers/token/TokenProvider.interface.js";
-import { IUsersRepository } from "../../users/repositories/users-repository.interface.js";
 import { loginBodySchema } from "../http/dtos/login.dto.js";
+
 
 export type LoginRequest = z.infer<typeof loginBodySchema>;
 export interface AuthenticationResponse {

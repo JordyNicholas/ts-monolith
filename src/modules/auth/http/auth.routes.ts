@@ -1,10 +1,13 @@
-// src/modules/auth/controllers/auth.routes.ts
-import { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { makeAuthenticateService } from '../factories/makeAuthenticateService.js';
 import { loginBodySchema, loginResponseSchema } from './dtos/login.dto.js';
 
-export const authRoutes: FastifyPluginAsyncZod = async (app) => {
-  app.post(
+export async function authRoutes(app: FastifyInstance) {
+
+const typedApp = app.withTypeProvider<ZodTypeProvider>();
+
+typedApp.post(
     '/login',
     {
       schema: {
@@ -18,12 +21,7 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
       const { email, password } = request.body;
 
       const authenticateService = makeAuthenticateService();
-      const user = await authenticateService.execute({ email, password });
-
-      const token = await reply.jwtSign(
-        { role: 'user' },
-        { sign: { sub: user.id, expiresIn: '1d' } },
-      );
+      const { user, token } = await authenticateService.execute({ email, password });
 
       return reply.status(200).send({
         token,
@@ -32,6 +30,6 @@ export const authRoutes: FastifyPluginAsyncZod = async (app) => {
           name: user.name,
         },
       });
-    },
+    }
   );
-};
+}
