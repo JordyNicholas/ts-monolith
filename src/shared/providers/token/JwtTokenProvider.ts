@@ -8,7 +8,7 @@ export class JwtTokenProvider implements ITokenProvider {
   constructor() {
     const secret: string | undefined = process.env.JWT_SECRET;
     if (!secret) {
-      throw new AppError('JWT_SECRET environment variable is missing', 500);
+      throw new AppError('JWT_SECRET environment variable is missing');
     }
     this.secret = secret;
   }
@@ -21,7 +21,7 @@ export class JwtTokenProvider implements ITokenProvider {
         { subject, expiresIn: '1d' },
         (err: Error | null, token: string | undefined) => {
           if (err || !token) {
-            return reject(new AppError('Failed to generate token', 500));
+            return reject(new AppError('Failed to generate token'));
           }
           resolve(token);
         }
