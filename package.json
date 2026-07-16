@@ -10,7 +10,8 @@
     "dev": "tsx watch src/shared/infra/server.ts",
     "build": "tsc && tsc-alias",
     "start": "node dist/shared/infra/server.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "tree": "npx tree-node-cli --dirs-first --exclude \"node_modules|dist|client|\\.git\""
   },
   "types": "module",
   "keywords": [],

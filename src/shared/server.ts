@@ -1,11 +1,12 @@
 import 'dotenv/config'; // Ensure variables are loaded before server start
 import { app } from './infra/http/app.js'; // Import the instance, not the framework
+import { env } from './infra/env/index.js';
 
 async function bootstrap(): Promise<void> {
   try {
     // Host 0.0.0.0 is critical for Docker/Cloud deployments later
-    await app.listen({ port: 3333, host: '0.0.0.0' });
-    console.log('🚀 Monolith Server running on http://localhost:3333');
+    await app.listen({ port: env.PORT, host: '0.0.0.0' });
+    console.log(`🚀 Monolith Server running on http://localhost:${env.PORT}`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);

@@ -1,5 +1,13 @@
-export type TokenPayload = Record<string, string | number | boolean>;
+
+export interface SignTokenPayload {
+  tenantId: string
+  role?: string
+}
+export interface TokenPayload extends SignTokenPayload {
+  sub: string;
+}
 
 export interface ITokenProvider {
-  sign(payload: TokenPayload, subject: string): Promise<string>;
+  sign(payload: SignTokenPayload, subject: string): Promise<string>;
+  verify(token: string): Promise<TokenPayload>;
 }
