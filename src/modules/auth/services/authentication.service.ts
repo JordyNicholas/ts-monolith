@@ -1,11 +1,10 @@
-import { IUsersRepository } from "@/modules/users/repositories/usersRepository.interface.js";
-import { UnauthorizedError } from "@/shared/core/errors/UnauthorizedError.js";
-import { User } from "@/shared/infra/database/client/client.js";
-import { IHashProvider } from "@/shared/providers/cryptography/HashProvider.interface.js";
-import { ITokenProvider } from "@/shared/providers/token/TokenProvider.interface.js";
-import z from "zod";
-import { loginBodySchema } from "../http/dtos/login.dto.js";
-
+import { IUsersRepository } from '@/modules/users/repositories/usersRepository.interface.js';
+import { UnauthorizedError } from '@/shared/core/errors/UnauthorizedError.js';
+import { User } from '@/shared/infra/database/client/client.js';
+import { IHashProvider } from '@/shared/providers/cryptography/HashProvider.interface.js';
+import { ITokenProvider } from '@/shared/providers/token/TokenProvider.interface.js';
+import z from 'zod';
+import { loginBodySchema } from '../http/dtos/login.dto.js';
 
 export type LoginRequest = z.infer<typeof loginBodySchema>;
 export interface AuthenticationResponse {
@@ -17,7 +16,7 @@ export class AuthenticationService {
   constructor(
     private readonly usersRepository: IUsersRepository,
     private readonly hashProvider: IHashProvider,
-    private readonly tokenProvider: ITokenProvider
+    private readonly tokenProvider: ITokenProvider,
   ) {}
 
   public async execute({ email, password }: LoginRequest): Promise<AuthenticationResponse> {
@@ -34,7 +33,10 @@ export class AuthenticationService {
       throw new UnauthorizedError('Invalid credentials');
     }
 
-    const token: string = await this.tokenProvider.sign({ role: 'user' }, user.id);
+    const token: string = await this.tokenProvider.sign(
+      { tenantId: user.tenantId, role: 'user' },
+      user.id,
+    );
 
     return {
       user,

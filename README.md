@@ -4,6 +4,85 @@ This repository implements a **strictly typed Modular Monolith architecture**. T
 
 ---
 
+## Quickstart
+
+### Prerequisites
+
+- Node.js 22+
+- Docker (for PostgreSQL)
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Update `JWT_SECRET` in `.env` with a random string of at least 32 characters.
+
+### 3. Start PostgreSQL
+
+```bash
+docker compose up -d
+```
+
+### 4. Generate Prisma client and run migrations
+
+```bash
+npm run db:generate
+npm run db:migrate
+npm run db:seed
+```
+
+### 5. Start the server
+
+```bash
+npm run dev
+```
+
+The API listens on `http://localhost:3333`.
+
+### 6. Try the API
+
+```bash
+# Health check
+curl http://localhost:3333/health
+
+# Register a user
+curl -X POST http://localhost:3333/users/ \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","email":"john@example.com","password":"supersecret"}'
+
+# Login
+curl -X POST http://localhost:3333/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"john@example.com","password":"supersecret"}'
+
+# Access a protected route (replace TOKEN)
+curl http://localhost:3333/users/me \
+  -H "Authorization: Bearer TOKEN"
+```
+
+### Available scripts
+
+| Script                | Description                    |
+| --------------------- | ------------------------------ |
+| `npm run dev`         | Start the server in watch mode |
+| `npm run build`       | Compile TypeScript to `dist/`  |
+| `npm start`           | Run the compiled server        |
+| `npm test`            | Run unit tests                 |
+| `npm run typecheck`   | Type-check without emitting    |
+| `npm run db:generate` | Generate Prisma client         |
+| `npm run db:migrate`  | Run database migrations        |
+| `npm run db:seed`     | Seed the default tenant        |
+
+---
+
 # 1. The Architecture We Are Obeying
 
 This structure strictly follows **Domain-Driven Design (DDD)** and **Clean Architecture** principles.
@@ -207,7 +286,7 @@ Contains only business logic.
 A service must depend only on interfaces such as:
 
 ```ts
-INewFeatureRepository
+INewFeatureRepository;
 ```
 
 A service must **never** import:
@@ -261,7 +340,7 @@ Example:
 
 ```ts
 app.register(newFeatureRoutes, {
-  prefix: "/new-feature",
+  prefix: '/new-feature',
 });
 ```
 

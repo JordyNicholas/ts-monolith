@@ -1,11 +1,13 @@
 import 'dotenv/config';
 import { z } from 'zod';
+import { DEFAULT_TENANT_ID } from './constants.js';
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(3333),
   DATABASE_URL: z.url('DATABASE_URL must be a valid connection string'),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters long for security'),
+  DEFAULT_TENANT_ID: z.uuid().default(DEFAULT_TENANT_ID),
 });
 
 // We use safeParse to gracefully catch errors and log them before crashing

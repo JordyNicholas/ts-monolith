@@ -7,30 +7,35 @@
     "prepare": "husky",
     "typecheck": "tsc --noEmit",
     "lint:staged": "lint-staged",
-    "dev": "tsx watch src/shared/infra/server.ts",
+    "dev": "tsx watch src/shared/server.ts",
     "build": "tsc && tsc-alias",
-    "start": "node dist/shared/infra/server.js",
+    "start": "node dist/shared/server.js",
     "test": "vitest run",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
     "tree": "npx tree-node-cli --dirs-first --exclude \"node_modules|dist|client|\\.git\""
   },
-  "types": "module",
   "keywords": [],
   "author": "Jordy Nicholas",
   "license": "MIT",
   "type": "module",
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "bcrypt": "^6.0.0",
     "fastify": "^5.10.0",
     "fastify-type-provider-zod": "^7.0.0",
     "jsonwebtoken": "^9.0.3",
+    "pg": "^8.22.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.1.1",
+    "@types/pg": "^8.20.0",
     "dotenv": "^17.4.2",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",
@@ -41,5 +46,8 @@
     "typescript": "^7.0.2",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.10"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
