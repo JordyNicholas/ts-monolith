@@ -7,11 +7,7 @@
   },
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
     },
     "schemas": {}
   },
@@ -26,12 +22,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": ["ok"]
-                    }
-                  },
+                  "properties": { "status": { "type": "string", "enum": ["ok"] } },
                   "required": ["status"],
                   "additionalProperties": false
                 }
@@ -52,13 +43,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": ["ready", "not_ready"]
-                    },
-                    "message": {
-                      "type": "string"
-                    }
+                    "status": { "type": "string", "enum": ["ready", "not_ready"] },
+                    "message": { "type": "string" }
                   },
                   "required": ["status"],
                   "additionalProperties": false
@@ -73,13 +59,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": ["ready", "not_ready"]
-                    },
-                    "message": {
-                      "type": "string"
-                    }
+                    "status": { "type": "string", "enum": ["ready", "not_ready"] },
+                    "message": { "type": "string" }
                   },
                   "required": ["status"],
                   "additionalProperties": false
@@ -101,21 +82,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "service": {
-                      "type": "string"
-                    },
-                    "totalRequests": {
-                      "type": "number"
-                    },
-                    "totalErrors": {
-                      "type": "number"
-                    },
-                    "uptimeSeconds": {
-                      "type": "number"
-                    },
-                    "startedAt": {
-                      "type": "string"
-                    }
+                    "service": { "type": "string" },
+                    "totalRequests": { "type": "number" },
+                    "totalErrors": { "type": "number" },
+                    "uptimeSeconds": { "type": "number" },
+                    "startedAt": { "type": "string" }
                   },
                   "required": [
                     "service",
@@ -148,10 +119,7 @@
                     "format": "email",
                     "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                   },
-                  "password": {
-                    "type": "string",
-                    "minLength": 6
-                  }
+                  "password": { "type": "string", "minLength": 6 }
                 },
                 "required": ["email", "password"]
               }
@@ -166,12 +134,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accessToken": {
-                      "type": "string"
-                    },
-                    "refreshToken": {
-                      "type": "string"
-                    },
+                    "accessToken": { "type": "string" },
+                    "refreshToken": { "type": "string" },
                     "user": {
                       "type": "object",
                       "properties": {
@@ -180,9 +144,7 @@
                           "format": "uuid",
                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                         },
-                        "name": {
-                          "type": "string"
-                        }
+                        "name": { "type": "string" }
                       },
                       "required": ["id", "name"],
                       "additionalProperties": false
@@ -207,11 +169,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "refreshToken": {
-                    "type": "string"
-                  }
-                },
+                "properties": { "refreshToken": { "type": "string" } },
                 "required": ["refreshToken"]
               }
             }
@@ -225,12 +183,8 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accessToken": {
-                      "type": "string"
-                    },
-                    "refreshToken": {
-                      "type": "string"
-                    }
+                    "accessToken": { "type": "string" },
+                    "refreshToken": { "type": "string" }
                   },
                   "required": ["accessToken", "refreshToken"],
                   "additionalProperties": false
@@ -249,27 +203,12 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "refreshToken": {
-                    "type": "string"
-                  }
-                }
-              }
+              "schema": { "type": "object", "properties": { "refreshToken": { "type": "string" } } }
             }
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Default Response"
-          }
-        }
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Default Response" } }
       }
     },
     "/users/": {
@@ -288,14 +227,8 @@
                     "format": "email",
                     "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                   },
-                  "name": {
-                    "type": "string",
-                    "minLength": 5
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8
-                  }
+                  "name": { "type": "string", "minLength": 5 },
+                  "password": { "type": "string", "minLength": 8 }
                 },
                 "required": ["email", "name", "password"]
               }
@@ -320,9 +253,7 @@
                       "format": "email",
                       "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                     },
-                    "name": {
-                      "type": "string"
-                    }
+                    "name": { "type": "string" }
                   },
                   "required": ["id", "email", "name"],
                   "additionalProperties": false
@@ -355,9 +286,7 @@
                       "format": "email",
                       "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
                     },
-                    "name": {
-                      "type": "string"
-                    },
+                    "name": { "type": "string" },
                     "tenantId": {
                       "type": "string",
                       "format": "uuid",
@@ -390,22 +319,13 @@
             "required": false
           },
           {
-            "schema": {
-              "default": 20,
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            },
+            "schema": { "default": 20, "type": "integer", "minimum": 1, "maximum": 100 },
             "in": "query",
             "name": "limit",
             "required": false
           }
         ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Default Response",
@@ -424,9 +344,7 @@
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           },
-                          "title": {
-                            "type": "string"
-                          },
+                          "title": { "type": "string" },
                           "status": {
                             "type": "string",
                             "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED"]
@@ -436,9 +354,7 @@
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           },
-                          "createdAt": {
-                            "type": "string"
-                          }
+                          "createdAt": { "type": "string" }
                         },
                         "required": ["id", "title", "status", "tenantId", "createdAt"],
                         "additionalProperties": false
@@ -447,18 +363,10 @@
                     "meta": {
                       "type": "object",
                       "properties": {
-                        "page": {
-                          "type": "number"
-                        },
-                        "limit": {
-                          "type": "number"
-                        },
-                        "total": {
-                          "type": "number"
-                        },
-                        "totalPages": {
-                          "type": "number"
-                        }
+                        "page": { "type": "number" },
+                        "limit": { "type": "number" },
+                        "total": { "type": "number" },
+                        "totalPages": { "type": "number" }
                       },
                       "required": ["page", "limit", "total", "totalPages"],
                       "additionalProperties": false
@@ -481,22 +389,13 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "minLength": 3
-                  }
-                },
+                "properties": { "title": { "type": "string", "minLength": 3 } },
                 "required": ["title"]
               }
             }
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "security": [{ "bearerAuth": [] }],
         "responses": {
           "201": {
             "description": "Default Response",
@@ -510,9 +409,7 @@
                       "format": "uuid",
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
-                    "title": {
-                      "type": "string"
-                    },
+                    "title": { "type": "string" },
                     "status": {
                       "type": "string",
                       "enum": ["PENDING", "PROCESSING", "COMPLETED", "FAILED"]
