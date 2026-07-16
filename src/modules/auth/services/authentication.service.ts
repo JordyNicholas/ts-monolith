@@ -1,27 +1,43 @@
-import { z } from 'zod';
-import { IUsersRepository } from '../../users/repositories/users-repository.interface.js';
-import { loginBodySchema } from '../http/dtos/login.dto.js';
-import { AppError } from '../../../shared/core/errors/AppError.js';
+import z from "zod";
+import { UnauthorizedError } from "../../../shared/core/errors/UnauthorizedError.js";
+import { User } from "../../../shared/infra/database/client/client.js";
+import { IHashProvider } from "../../../shared/providers/cryptography/HashProvider.interface.js";
+import { ITokenProvider } from "../../../shared/providers/token/TokenProvider.interface.js";
+import { IUsersRepository } from "../../users/repositories/users-repository.interface.js";
+import { loginBodySchema } from "../http/dtos/login.dto.js";
 
-type LoginRequest = z.infer<typeof loginBodySchema>;
+export type LoginRequest = z.infer<typeof loginBodySchema>;
+export interface AuthenticationResponse {
+  user: User;
+  token: string;
+}
 
-export class AuthenticateService {
-  constructor(private readonly usersRepository: IUsersRepository) {}
+export class AuthenticationService {
+  constructor(
+    private readonly usersRepository: IUsersRepository,
+    private readonly hashProvider: IHashProvider,
+    private readonly tokenProvider: ITokenProvider
+  ) {}
 
-  async execute({ email, password }: LoginRequest) {
-    const user = await this.usersRepository.findByEmail(email);
+  public async execute({ email, password }: LoginRequest): Promise<AuthenticationResponse> {
+    const user: User | null = await this.usersRepository.findByEmail(email);
 
     if (!user) {
-      throw new AppError('Invalid credentials', 401);
+      await this.hashProvider.hash(password);
+      throw new UnauthorizedError('Invalid credentials');
     }
 
-    // In a real application, compare using bcrypt
-    const passwordMatches: boolean = password === user.password;
+    const passwordMatches: boolean = await this.hashProvider.compare(password, user.password);
 
     if (!passwordMatches) {
-      throw new AppError('Invalid credentials', 401);
+      throw new UnauthorizedError('Invalid credentials');
     }
 
-    return user;
+    const token: string = await this.tokenProvider.sign({ role: 'user' }, user.id);
+
+    return {
+      user,
+      token,
+    };
   }
 }
