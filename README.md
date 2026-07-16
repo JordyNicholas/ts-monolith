@@ -92,6 +92,19 @@ curl "http://localhost:3333/reports/?page=1&limit=10" \
 
 See **[docs/DECISIONS.md](docs/DECISIONS.md)** for ADRs (queue drivers, tenancy, Argon2, JWT refresh, e2e strategy, etc.).
 
+### OpenAPI contract and frontend codegen
+
+The API contract is committed at `openapi/openapi.json` and validated in CI:
+
+```bash
+npm run openapi:export
+npm run openapi:check
+```
+
+The separate `nextjs-boilerplate` repository consumes this contract with
+`openapi-typescript`. When a route schema changes, export the contract here, then
+sync/regenerate types in the frontend.
+
 ### Scaffold a new module
 
 ```bash
@@ -108,6 +121,8 @@ npm run scaffold:module -- billing
 | `npm start`               | Run the compiled server                        |
 | `npm test`                | Run unit + HTTP integration tests              |
 | `npm run test:e2e`        | Run full DB e2e happy-path (needs Postgres)    |
+| `npm run openapi:export`  | Export the Fastify OpenAPI contract            |
+| `npm run openapi:check`   | Fail if the committed contract is stale        |
 | `npm run scaffold:module` | Generate a new bounded-context module skeleton |
 | `npm run lint`            | Run ESLint + architecture boundary checks      |
 | `npm run typecheck`       | Type-check without emitting                    |

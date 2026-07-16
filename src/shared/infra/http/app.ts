@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import Fastify, { FastifyInstance } from 'fastify';
-import { serializerCompiler, validatorCompiler, ZodTypeProvider } from 'fastify-type-provider-zod';
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+  ZodTypeProvider,
+} from 'fastify-type-provider-zod';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { globalErrorHandler } from './errorHandler.js';
@@ -35,6 +40,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   await registerSecurityPlugins(app);
 
   await app.register(fastifySwagger, {
+    transform: jsonSchemaTransform,
     openapi: {
       info: {
         title: 'TS Monolith API',

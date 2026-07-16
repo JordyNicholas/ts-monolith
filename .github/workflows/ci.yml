@@ -58,6 +58,9 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
+      - name: Verify committed OpenAPI contract
+        run: npm run openapi:check
+
       - name: Lint
         run: npm run lint
 

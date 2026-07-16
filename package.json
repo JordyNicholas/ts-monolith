@@ -16,6 +16,8 @@
     "start:worker": "node dist/workers/reports.worker.js",
     "test": "vitest run",
     "test:e2e": "E2E_TESTS=true vitest run src/shared/infra/http/app.e2e.spec.ts",
+    "openapi:export": "NODE_ENV=test tsx scripts/export-openapi.ts",
+    "openapi:check": "npm run openapi:export && git diff --exit-code -- openapi/openapi.json",
     "scaffold:module": "node scripts/scaffold-module.mjs",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
