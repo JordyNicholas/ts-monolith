@@ -11,16 +11,44 @@ datasource db {
 
 // Example model to validate type generation
 model User {
-  id String @default(uuid())
-  tenantId String
-  email String @unique
-  name String @unique
-  password String
+  id        String   @default(uuid())
+  tenantId  String
+  email     String   @unique
+  name      String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@id([id, tenantId])
+  @@unique([email, tenantId])
+  @@map("users")
+}
+
+model Tenant {
+  id        String   @unique @default(uuid())
+  name      String
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@id([id, tenantId])
+  users   User[]
+  reports Report[]
 
-  @@unique([email, tenantId])
-  @@map("users")
+  @@map("tenants")
+}
+
+model Report {
+  id        String   @default(uuid())
+  tenantId  String
+  title     String
+  status    String   @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Compound ID enforces strict multi-tenancy, ensuring that a report is always associated with a specific tenant.
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@id([id, tenantId])
+  @@map("reports")
 }

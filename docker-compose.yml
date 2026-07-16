@@ -1,0 +1,17 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ts_monolith_postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: monolith_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - monolith:/var/lib/postgresql/data
+
+volumes:
+    monolith:
