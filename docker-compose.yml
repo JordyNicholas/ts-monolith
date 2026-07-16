@@ -16,6 +16,17 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    container_name: ts_monolith_redis
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   api:
     profiles: ['full']
     build: .
@@ -23,10 +34,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       NODE_ENV: production
       PORT: 3333
       DATABASE_URL: postgresql://user:password@postgres:5432/monolith_db
+      REDIS_URL: redis://redis:6379
+      QUEUE_DRIVER: bullmq
       JWT_SECRET: change-me-to-a-long-random-secret-at-least-32-chars
       DEFAULT_TENANT_ID: 00000000-0000-4000-8000-000000000001
     ports:
@@ -35,6 +50,24 @@ services:
       sh -c "npx prisma migrate deploy &&
              npx tsx prisma/seed.ts &&
              node dist/shared/server.js"
+
+  worker:
+    profiles: ['full']
+    build: .
+    container_name: ts_monolith_worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://user:password@postgres:5432/monolith_db
+      REDIS_URL: redis://redis:6379
+      QUEUE_DRIVER: bullmq
+      JWT_SECRET: change-me-to-a-long-random-secret-at-least-32-chars
+      DEFAULT_TENANT_ID: 00000000-0000-4000-8000-000000000001
+    command: node dist/workers/reports.worker.js
 
 volumes:
   monolith:

@@ -1,6 +1,6 @@
+import { IJobQueueProducer } from '@/shared/infra/queue/jobQueue.interface.js';
 import { ReportEntity } from '../domain/report.entity.js';
 import { IReportsRepository } from '../repositories/reportsRepository.interface.js';
-import { IJobQueue } from '@/shared/infra/queue/jobQueue.interface.js';
 
 export interface CreateReportRequest {
   title: string;
@@ -10,7 +10,7 @@ export interface CreateReportRequest {
 export class CreateReportService {
   constructor(
     private readonly reportsRepository: IReportsRepository,
-    private readonly jobQueue: IJobQueue,
+    private readonly jobQueue: IJobQueueProducer,
   ) {}
 
   public async execute({ title, tenantId }: CreateReportRequest): Promise<ReportEntity> {

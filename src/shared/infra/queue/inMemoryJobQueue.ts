@@ -1,11 +1,11 @@
 import { JobEnvelope } from './jobEnvelope.schema.js';
-import { IJobQueue } from './jobQueue.interface.js';
+import { IJobQueueProducer } from './jobQueue.interface.js';
 
 /**
- * In-memory queue for local development and boilerplate demos.
- * Swap this implementation for BullMQ/SQS in production without changing consumers.
+ * In-memory queue for local development when QUEUE_DRIVER=memory.
+ * Jobs are process-local — use BullMQ (QUEUE_DRIVER=bullmq) for multi-process workers.
  */
-export class InMemoryJobQueue implements IJobQueue {
+export class InMemoryJobQueue implements IJobQueueProducer {
   private readonly jobs: JobEnvelope[] = [];
 
   public async enqueue(job: JobEnvelope): Promise<void> {

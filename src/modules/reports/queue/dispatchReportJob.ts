@@ -1,8 +1,8 @@
 import { makeProcessReportService } from '../factories/makeProcessReportsService.js';
 import { JobEnvelope } from '@/shared/infra/queue/jobEnvelope.schema.js';
-import { IJobQueue } from '@/shared/infra/queue/jobQueue.interface.js';
+import { InMemoryJobQueue } from '@/shared/infra/queue/inMemoryJobQueue.js';
 
-export async function processNextReportJob(queue: IJobQueue): Promise<boolean> {
+export async function processNextReportJob(queue: InMemoryJobQueue): Promise<boolean> {
   const job = await queue.dequeue();
   if (!job) {
     return false;

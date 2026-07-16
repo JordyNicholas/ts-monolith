@@ -12,7 +12,8 @@ export interface LoginRequest {
 
 export interface AuthenticationResponse {
   user: UserEntity;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export class AuthenticationService {
@@ -40,11 +41,14 @@ export class AuthenticationService {
       throw new UnauthorizedError('Invalid credentials');
     }
 
-    const token = await this.tokenProvider.sign({ tenantId: user.tenantId, role: 'user' }, user.id);
+    const tokenPayload = { tenantId: user.tenantId, role: 'user' as const };
+    const accessToken = await this.tokenProvider.signAccess(tokenPayload, user.id);
+    const refreshToken = await this.tokenProvider.signRefresh(tokenPayload, user.id);
 
     return {
       user,
-      token,
+      accessToken,
+      refreshToken,
     };
   }
 }

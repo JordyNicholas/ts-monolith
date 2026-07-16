@@ -1,8 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { UnauthorizedError } from '@/shared/core/errors/UnauthorizedError.js';
 import { JwtTokenProvider } from '@/shared/providers/token/JwtTokenProvider.js';
+import { getTokenRevocationStore } from '@/shared/providers/token/getTokenRevocationStore.js';
 
-const tokenProvider = new JwtTokenProvider();
+const tokenProvider = new JwtTokenProvider(getTokenRevocationStore());
 
 export async function ensureAuthenticated(
   request: FastifyRequest,
@@ -15,7 +16,7 @@ export async function ensureAuthenticated(
   }
 
   const token = authHeader.slice('Bearer '.length);
-  const payload = await tokenProvider.verify(token);
+  const payload = await tokenProvider.verifyAccess(token);
 
   request.user = {
     id: payload.sub,

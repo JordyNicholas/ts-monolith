@@ -9,6 +9,7 @@ export default [
       'src/**',
       'prisma/**',
       'coverage/**',
+      'scripts/**',
       'eslint.config.js',
     ],
   },

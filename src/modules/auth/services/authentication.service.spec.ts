@@ -33,7 +33,8 @@ describe('Authentication Service', () => {
       tenantId: DEFAULT_TENANT_ID,
     });
 
-    expect(result.token).toEqual(expect.any(String));
+    expect(result.accessToken).toEqual(expect.any(String));
+    expect(result.refreshToken).toEqual(expect.any(String));
     expect(result.user.email).toBe('john@flux.com');
   });
 

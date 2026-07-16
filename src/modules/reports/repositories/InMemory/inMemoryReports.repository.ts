@@ -31,4 +31,10 @@ export class InMemoryReportsRepository implements IReportsRepository {
     report.updatedAt = new Date();
     return report;
   }
+
+  public async list(pagination: { page: number; limit: number }) {
+    const start = (pagination.page - 1) * pagination.limit;
+    const items = this.items.slice(start, start + pagination.limit);
+    return { items, total: this.items.length };
+  }
 }

@@ -68,36 +68,67 @@ curl -X POST http://localhost:3333/users/ \
   -H "x-tenant-id: 00000000-0000-4000-8000-000000000001" \
   -d '{"name":"John Doe","email":"john@example.com","password":"supersecret"}'
 
-# Login
+# Login (returns accessToken + refreshToken)
 curl -X POST http://localhost:3333/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"john@example.com","password":"supersecret"}'
 
-# Access a protected route (replace TOKEN)
+# Access a protected route (replace ACCESS_TOKEN)
 curl http://localhost:3333/users/me \
-  -H "Authorization: Bearer TOKEN"
+  -H "Authorization: Bearer ACCESS_TOKEN"
 
-# Create a report (processed in-process for demos)
+# Create a report (memory queue processes in-process; use worker + bullmq in prod)
 curl -X POST http://localhost:3333/reports/ \
-  -H "Authorization: Bearer TOKEN" \
+  -H "Authorization: Bearer ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"title":"Monthly revenue"}'
+
+# List reports (paginated)
+curl "http://localhost:3333/reports/?page=1&limit=10" \
+  -H "Authorization: Bearer ACCESS_TOKEN"
+```
+
+### Architecture decisions
+
+See **[docs/DECISIONS.md](docs/DECISIONS.md)** for ADRs (queue drivers, tenancy, Argon2, JWT refresh, e2e strategy, etc.).
+
+### Scaffold a new module
+
+```bash
+npm run scaffold:module -- billing
 ```
 
 ### Available scripts
 
-| Script                | Description                                       |
-| --------------------- | ------------------------------------------------- |
-| `npm run dev`         | Start the server in watch mode                    |
-| `npm run dev:worker`  | Start the reports worker (for Redis/BullMQ later) |
-| `npm run build`       | Compile TypeScript to `dist/`                     |
-| `npm start`           | Run the compiled server                           |
-| `npm test`            | Run unit + HTTP integration tests                 |
-| `npm run lint`        | Run ESLint + architecture boundary checks         |
-| `npm run typecheck`   | Type-check without emitting                       |
-| `npm run db:generate` | Generate Prisma client                            |
-| `npm run db:migrate`  | Run database migrations                           |
-| `npm run db:seed`     | Seed the default tenant                           |
+| Script                    | Description                                    |
+| ------------------------- | ---------------------------------------------- |
+| `npm run dev`             | Start the server in watch mode                 |
+| `npm run dev:worker`      | Start the reports worker                       |
+| `npm run build`           | Compile TypeScript to `dist/`                  |
+| `npm start`               | Run the compiled server                        |
+| `npm test`                | Run unit + HTTP integration tests              |
+| `npm run test:e2e`        | Run full DB e2e happy-path (needs Postgres)    |
+| `npm run scaffold:module` | Generate a new bounded-context module skeleton |
+| `npm run lint`            | Run ESLint + architecture boundary checks      |
+| `npm run typecheck`       | Type-check without emitting                    |
+| `npm run db:generate`     | Generate Prisma client                         |
+| `npm run db:migrate`      | Run database migrations                        |
+| `npm run db:seed`         | Seed the default tenant                        |
+
+### Production queue (BullMQ + Redis)
+
+```bash
+docker compose up -d redis
+# .env: QUEUE_DRIVER=bullmq
+npm run dev          # API
+npm run dev:worker   # separate terminal
+```
+
+Or full Docker stack:
+
+```bash
+docker compose --profile full up -d --build
+```
 
 ---
 

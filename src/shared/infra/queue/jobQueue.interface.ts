@@ -1,7 +1,5 @@
 import { JobEnvelope } from './jobEnvelope.schema.js';
 
-export interface IJobQueue {
+export interface IJobQueueProducer {
   enqueue(job: JobEnvelope): Promise<void>;
-  dequeue(): Promise<JobEnvelope | null>;
-  size(): number;
 }

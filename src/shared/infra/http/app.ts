@@ -7,13 +7,18 @@ import { globalErrorHandler } from './errorHandler.js';
 import { healthRoutes } from './health.routes.js';
 import { metricsRoutes } from './metrics.routes.js';
 import { requestContextHook } from './hooks/requestContext.js';
+import { registerSecurityPlugins } from './plugins/security.js';
 import { authRoutes } from '../../../modules/auth/http/auth.routes.js';
 import { usersRoutes } from '../../../modules/users/http/users.routes.js';
 import { reportsRoutes } from '../../../modules/reports/http/reports.routes.js';
 import { prisma } from '../database/prisma.js';
 import { env } from '../env/index.js';
+import { initTracing } from '../observability/tracing.js';
+import { closeBullMQConnections } from '../queue/bullmqJobQueue.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
+  initTracing();
+
   const app = Fastify({
     logger: {
       level: env.NODE_ENV === 'production' ? 'info' : 'debug',
@@ -26,6 +31,8 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
   app.setErrorHandler(globalErrorHandler);
+
+  await registerSecurityPlugins(app);
 
   await app.register(fastifySwagger, {
     openapi: {
@@ -63,6 +70,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.addHook('onClose', async (instance: FastifyInstance) => {
     instance.log.info('Disconnecting Prisma from the PostgreSQL database...');
     await prisma.$disconnect();
+    await closeBullMQConnections();
   });
 
   return app;

@@ -40,6 +40,23 @@ export class PrismaReportsRepository implements IReportsRepository {
     return this.toEntity(updated);
   }
 
+  public async list(pagination: { page: number; limit: number }) {
+    const skip = (pagination.page - 1) * pagination.limit;
+    const [items, total] = await Promise.all([
+      this.prisma.report.findMany({
+        skip,
+        take: pagination.limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.report.count(),
+    ]);
+
+    return {
+      items: items.map((report) => this.toEntity(report)),
+      total,
+    };
+  }
+
   private toEntity(report: {
     id: string;
     tenantId: string;
