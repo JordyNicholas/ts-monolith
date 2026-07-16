@@ -1,25 +1,22 @@
 import { randomUUID } from 'node:crypto';
-import { Prisma, User } from '@/shared/infra/database/client/browser.js';
+import { CreateUserData, UserEntity } from '../../domain/user.entity.js';
 import { IUsersRepository } from '../usersRepository.interface.js';
 
 export class InMemoryUsersRepository implements IUsersRepository {
-  public items: User[] = [];
+  public items: UserEntity[] = [];
 
-  public async findByEmail(email: string): Promise<User | null> {
-    const user: User | undefined = this.items.find((item) => item.email === email);
-    return user || null;
+  public async findByEmail(email: string, tenantId: string): Promise<UserEntity | null> {
+    const user = this.items.find((item) => item.email === email && item.tenantId === tenantId);
+    return user ?? null;
   }
 
-  public async findById(id: string, tenantId: string): Promise<User | null> {
-    const user: User | undefined = this.items.find(
-      (item) => item.id === id && item.tenantId === tenantId,
-    );
-    return user || null;
+  public async findById(id: string, tenantId: string): Promise<UserEntity | null> {
+    const user = this.items.find((item) => item.id === id && item.tenantId === tenantId);
+    return user ?? null;
   }
 
-  // We explicitly type the input to match the interface contract
-  public async create(data: Prisma.UserUncheckedCreateInput): Promise<User> {
-    const user: User = {
+  public async create(data: CreateUserData): Promise<UserEntity> {
+    const user: UserEntity = {
       id: randomUUID(),
       tenantId: data.tenantId,
       email: data.email,

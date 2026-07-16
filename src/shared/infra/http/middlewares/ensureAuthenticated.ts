@@ -22,4 +22,9 @@ export async function ensureAuthenticated(
     tenantId: payload.tenantId,
     ...(payload.role !== undefined ? { role: payload.role } : {}),
   };
+  request.tenantId = payload.tenantId;
+  request.log = request.log.child({
+    userId: payload.sub,
+    tenantId: payload.tenantId,
+  });
 }

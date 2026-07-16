@@ -1,3 +1,8 @@
 {
-  "*.{ts,js,json,md}": "prettier --write"
+  "*.{ts,js}": [
+    "prettier --write"
+  ],
+  "*.{json,md}": [
+    "prettier --write"
+  ]
 }

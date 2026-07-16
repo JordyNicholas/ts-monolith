@@ -1,5 +1,7 @@
-import { Report } from "@/shared/infra/database/client/client.js";
+import { CreateReportData, ReportEntity, ReportStatus } from '../domain/report.entity.js';
 
 export interface IReportsRepository {
-  findById(id: string): Promise<Report | null>;
+  findById(id: string): Promise<ReportEntity | null>;
+  create(data: CreateReportData): Promise<ReportEntity>;
+  updateStatus(id: string, status: ReportStatus): Promise<ReportEntity>;
 }

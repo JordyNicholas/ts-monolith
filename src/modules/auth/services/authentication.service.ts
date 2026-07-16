@@ -1,14 +1,17 @@
 import { IUsersRepository } from '@/modules/users/repositories/usersRepository.interface.js';
 import { UnauthorizedError } from '@/shared/core/errors/UnauthorizedError.js';
-import { User } from '@/shared/infra/database/client/client.js';
+import { UserEntity } from '@/modules/users/domain/user.entity.js';
 import { IHashProvider } from '@/shared/providers/cryptography/HashProvider.interface.js';
 import { ITokenProvider } from '@/shared/providers/token/TokenProvider.interface.js';
-import z from 'zod';
-import { loginBodySchema } from '../http/dtos/login.dto.js';
 
-export type LoginRequest = z.infer<typeof loginBodySchema>;
+export interface LoginRequest {
+  email: string;
+  password: string;
+  tenantId: string;
+}
+
 export interface AuthenticationResponse {
-  user: User;
+  user: UserEntity;
   token: string;
 }
 
@@ -19,24 +22,25 @@ export class AuthenticationService {
     private readonly tokenProvider: ITokenProvider,
   ) {}
 
-  public async execute({ email, password }: LoginRequest): Promise<AuthenticationResponse> {
-    const user: User | null = await this.usersRepository.findByEmail(email);
+  public async execute({
+    email,
+    password,
+    tenantId,
+  }: LoginRequest): Promise<AuthenticationResponse> {
+    const user = await this.usersRepository.findByEmail(email, tenantId);
 
     if (!user) {
       await this.hashProvider.hash(password);
       throw new UnauthorizedError('Invalid credentials');
     }
 
-    const passwordMatches: boolean = await this.hashProvider.compare(password, user.password);
+    const passwordMatches = await this.hashProvider.compare(password, user.password);
 
     if (!passwordMatches) {
       throw new UnauthorizedError('Invalid credentials');
     }
 
-    const token: string = await this.tokenProvider.sign(
-      { tenantId: user.tenantId, role: 'user' },
-      user.id,
-    );
+    const token = await this.tokenProvider.sign({ tenantId: user.tenantId, role: 'user' }, user.id);
 
     return {
       user,

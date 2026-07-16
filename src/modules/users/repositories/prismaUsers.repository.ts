@@ -1,26 +1,27 @@
-// src/modules/users/repositories/prisma-users-repository.ts
-import { Prisma, PrismaClient } from '@/shared/infra/database/client/client.js';
+import { TenantPrismaClient } from '@/shared/infra/database/prisma.js';
+import { CreateUserData, UserEntity } from '../domain/user.entity.js';
 import { IUsersRepository } from './usersRepository.interface.js';
 
 export class PrismaUsersRepository implements IUsersRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: TenantPrismaClient) {}
 
-  async findByEmail(email: string) {
-    return this.prisma.user.findUnique({ where: { email } });
+  async findByEmail(email: string, _tenantId: string): Promise<UserEntity | null> {
+    // Tenant scope is injected by getTenantPrisma extension.
+    return this.prisma.user.findFirst({ where: { email } });
   }
 
-  async findById(id: string, tenantId: string) {
-    return this.prisma.user.findUnique({
-      where: {
-        id_tenantId: {
-          id,
-          tenantId,
-        },
+  async findById(id: string, _tenantId: string): Promise<UserEntity | null> {
+    return this.prisma.user.findFirst({ where: { id } });
+  }
+
+  async create(data: CreateUserData): Promise<UserEntity> {
+    return this.prisma.user.create({
+      data: {
+        email: data.email,
+        name: data.name,
+        password: data.password,
+        tenantId: data.tenantId,
       },
     });
-  }
-
-  async create(data: Prisma.UserUncheckedCreateInput) {
-    return this.prisma.user.create({ data });
   }
 }

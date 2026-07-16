@@ -1,10 +1,13 @@
 import { AppError } from '@/shared/core/errors/AppError.js';
 import { IHashProvider } from '@/shared/providers/cryptography/HashProvider.interface.js';
-import z from 'zod';
-import { registerBodySchema } from '../http/dtos/register.dto.js';
+import { UserEntity } from '../domain/user.entity.js';
 import { IUsersRepository } from '../repositories/usersRepository.interface.js';
 
-type RegisterUserRequest = z.infer<typeof registerBodySchema>;
+export interface RegisterUserRequest {
+  email: string;
+  name: string;
+  password: string;
+}
 
 export class RegisterUserService {
   constructor(
@@ -13,21 +16,20 @@ export class RegisterUserService {
     private readonly tenantId: string,
   ) {}
 
-  async execute({ email, name, password }: RegisterUserRequest) {
-    const userExists = await this.usersRepository.findByEmail(email);
+  async execute({ email, name, password }: RegisterUserRequest): Promise<UserEntity> {
+    const userExists = await this.usersRepository.findByEmail(email, this.tenantId);
 
     if (userExists) {
       throw new AppError('User already exists');
     }
 
     const hashedPassword = await this.hashProvider.hash(password);
-    const user = await this.usersRepository.create({
+
+    return this.usersRepository.create({
       email,
       name,
       password: hashedPassword,
       tenantId: this.tenantId,
     });
-
-    return user;
   }
 }

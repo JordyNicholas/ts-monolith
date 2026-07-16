@@ -1,7 +1,7 @@
-import { Prisma, User } from '@/shared/infra/database/client/client.js';
+import { CreateUserData, UserEntity } from '../domain/user.entity.js';
 
 export interface IUsersRepository {
-  findByEmail(email: string): Promise<User | null>;
-  findById(id: string, tenantId: string): Promise<User | null>;
-  create(data: Prisma.UserUncheckedCreateInput): Promise<User>;
+  findByEmail(email: string, tenantId: string): Promise<UserEntity | null>;
+  findById(id: string, tenantId: string): Promise<UserEntity | null>;
+  create(data: CreateUserData): Promise<UserEntity>;
 }

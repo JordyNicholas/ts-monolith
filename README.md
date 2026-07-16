@@ -31,6 +31,12 @@ Update `JWT_SECRET` in `.env` with a random string of at least 32 characters.
 docker compose up -d
 ```
 
+For the full stack (API container + Postgres):
+
+```bash
+docker compose --profile full up -d --build
+```
+
 ### 4. Generate Prisma client and run migrations
 
 ```bash
@@ -47,15 +53,19 @@ npm run dev
 
 The API listens on `http://localhost:3333`.
 
+- OpenAPI docs: `http://localhost:3333/docs`
+- Metrics: `http://localhost:3333/metrics`
+
 ### 6. Try the API
 
 ```bash
 # Health check
 curl http://localhost:3333/health
 
-# Register a user
+# Register a user (optional x-tenant-id header; defaults to seeded tenant)
 curl -X POST http://localhost:3333/users/ \
   -H "Content-Type: application/json" \
+  -H "x-tenant-id: 00000000-0000-4000-8000-000000000001" \
   -d '{"name":"John Doe","email":"john@example.com","password":"supersecret"}'
 
 # Login
@@ -66,20 +76,28 @@ curl -X POST http://localhost:3333/auth/login \
 # Access a protected route (replace TOKEN)
 curl http://localhost:3333/users/me \
   -H "Authorization: Bearer TOKEN"
+
+# Create a report (processed in-process for demos)
+curl -X POST http://localhost:3333/reports/ \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Monthly revenue"}'
 ```
 
 ### Available scripts
 
-| Script                | Description                    |
-| --------------------- | ------------------------------ |
-| `npm run dev`         | Start the server in watch mode |
-| `npm run build`       | Compile TypeScript to `dist/`  |
-| `npm start`           | Run the compiled server        |
-| `npm test`            | Run unit tests                 |
-| `npm run typecheck`   | Type-check without emitting    |
-| `npm run db:generate` | Generate Prisma client         |
-| `npm run db:migrate`  | Run database migrations        |
-| `npm run db:seed`     | Seed the default tenant        |
+| Script                | Description                                       |
+| --------------------- | ------------------------------------------------- |
+| `npm run dev`         | Start the server in watch mode                    |
+| `npm run dev:worker`  | Start the reports worker (for Redis/BullMQ later) |
+| `npm run build`       | Compile TypeScript to `dist/`                     |
+| `npm start`           | Run the compiled server                           |
+| `npm test`            | Run unit + HTTP integration tests                 |
+| `npm run lint`        | Run ESLint + architecture boundary checks         |
+| `npm run typecheck`   | Type-check without emitting                       |
+| `npm run db:generate` | Generate Prisma client                            |
+| `npm run db:migrate`  | Run database migrations                           |
+| `npm run db:seed`     | Seed the default tenant                           |
 
 ---
 
@@ -122,6 +140,7 @@ Each module follows the same internal structure:
 
 ```text
 module/
+├── domain/
 ├── http/
 │   ├── dtos/
 │   └── *.routes.ts

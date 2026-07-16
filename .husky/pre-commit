@@ -1,5 +1,5 @@
 echo "🔍 Running Type Check..."
 npm run typecheck
 
-echo "💅 Formatting Staged Files..."
+echo "🧹 Running ESLint on staged files..."
 npm run lint:staged
