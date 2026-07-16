@@ -1,4 +1,4 @@
-import { IUsersRepository } from "@/modules/users/repositories/users-repository.interface.js";
+import { IUsersRepository } from "@/modules/users/repositories/usersRepository.interface.js";
 import { UnauthorizedError } from "@/shared/core/errors/UnauthorizedError.js";
 import { User } from "@/shared/infra/database/client/client.js";
 import { IHashProvider } from "@/shared/providers/cryptography/HashProvider.interface.js";

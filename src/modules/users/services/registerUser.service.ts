@@ -2,7 +2,7 @@ import { AppError } from "@/shared/core/errors/AppError.js";
 import { IHashProvider } from "@/shared/providers/cryptography/HashProvider.interface.js";
 import z from "zod";
 import { registerBodySchema } from "../http/dtos/register.dto.js";
-import { IUsersRepository } from "../repositories/users-repository.interface.js";
+import { IUsersRepository } from "../repositories/usersRepository.interface.js";
 
 type RegisterUserRequest = z.infer<typeof registerBodySchema>;
 
