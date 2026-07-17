@@ -17,6 +17,7 @@ const envSchema = z
       .optional(),
     DEFAULT_TENANT_ID: z.uuid().default(DEFAULT_TENANT_ID),
     QUEUE_DRIVER: z.enum(['memory', 'bullmq']).default('memory'),
+    TOKEN_REVOCATION_DRIVER: z.enum(['memory', 'redis']).optional(),
     REDIS_URL: z.string().default('redis://localhost:6379'),
     HASH_ALGORITHM: z.enum(['argon2', 'bcrypt']).default('argon2'),
     CORS_ORIGIN: z.string().default('*'),
@@ -74,4 +75,7 @@ if (_env.success === false) {
 export const env = {
   ..._env.data,
   JWT_REFRESH_SECRET: _env.data.JWT_REFRESH_SECRET ?? `${_env.data.JWT_SECRET}-refresh`,
+  TOKEN_REVOCATION_DRIVER:
+    _env.data.TOKEN_REVOCATION_DRIVER ??
+    (_env.data.QUEUE_DRIVER === 'bullmq' ? ('redis' as const) : ('memory' as const)),
 };

@@ -1,0 +1,13 @@
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+
+# Generated contracts must remain byte-identical across operating systems.
+openapi/*.json text eol=lf

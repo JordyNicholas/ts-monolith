@@ -6,23 +6,28 @@ production values.
 
 ## Environment matrix
 
-| Variable             | Local                     | Test                          | Production                         |
-| -------------------- | ------------------------- | ----------------------------- | ---------------------------------- |
-| `NODE_ENV`           | `development`             | `test`                        | `production`                       |
-| `DATABASE_URL`       | local Compose             | isolated test DB              | managed secret                     |
-| `JWT_SECRET`         | generated developer value | deterministic test-only value | unique managed secret              |
-| `JWT_REFRESH_SECRET` | optional derived value    | deterministic test-only value | independent managed secret         |
-| `DEFAULT_TENANT_ID`  | seeded demo tenant        | deterministic fixture         | avoid as product routing           |
-| `QUEUE_DRIVER`       | `memory`                  | `memory`                      | `bullmq` when workers are required |
-| `REDIS_URL`          | local Redis when needed   | integration-test Redis        | managed secret                     |
-| `CORS_ORIGIN`        | local frontend origin     | test origin                   | explicit deployed origins          |
-| `OTEL_ENABLED`       | normally `false`          | `false`                       | product decision                   |
-| `OTEL_SERVICE_NAME`  | local service name        | test service name             | product/environment name           |
+| Variable                  | Local                     | Test                          | Production                         |
+| ------------------------- | ------------------------- | ----------------------------- | ---------------------------------- |
+| `NODE_ENV`                | `development`             | `test`                        | `production`                       |
+| `DATABASE_URL`            | local Compose             | isolated test DB              | managed secret                     |
+| `JWT_SECRET`              | generated developer value | deterministic test-only value | unique managed secret              |
+| `JWT_REFRESH_SECRET`      | optional derived value    | deterministic test-only value | independent managed secret         |
+| `DEFAULT_TENANT_ID`       | seeded demo tenant        | deterministic fixture         | avoid as product routing           |
+| `QUEUE_DRIVER`            | `memory`                  | `memory`                      | `bullmq` when workers are required |
+| `TOKEN_REVOCATION_DRIVER` | `memory`                  | `memory`                      | `redis` for multiple API instances |
+| `REDIS_URL`               | local Redis when needed   | integration-test Redis        | managed secret                     |
+| `CORS_ORIGIN`             | local frontend origin     | test origin                   | explicit deployed origins          |
+| `OTEL_ENABLED`            | normally `false`          | `false`                       | product decision                   |
+| `OTEL_SERVICE_NAME`       | local service name        | test service name             | product/environment name           |
 
 ## Build-time versus runtime
 
 All backend variables are runtime inputs. The same build artifact should be
 promotable through environments without recompilation.
+
+`TOKEN_REVOCATION_DRIVER` is independent from background job processing. If it
+is omitted, it follows `QUEUE_DRIVER` (`bullmq` selects Redis) for backward
+compatibility.
 
 ## Secrets
 
