@@ -49,7 +49,7 @@ for (const dir of dirs) {
 }
 
 const files = {
-  [`${base}/domain/${camel}.entity.ts`]: `export interface ${pascal}Entity {
+  [join(base, 'domain', `${camel}.entity.ts`)]: `export interface ${pascal}Entity {
   id: string;
   tenantId: string;
   name: string;
@@ -57,14 +57,14 @@ const files = {
   updatedAt: Date;
 }
 `,
-  [`${base}/repositories/${camel}Repository.interface.ts`]: `import { ${pascal}Entity } from '../domain/${camel}.entity.js';
+  [join(base, 'repositories', `${camel}Repository.interface.ts`)]: `import { ${pascal}Entity } from '../domain/${camel}.entity.js';
 
 export interface I${pascal}Repository {
   findById(id: string, tenantId: string): Promise<${pascal}Entity | null>;
   create(data: { tenantId: string; name: string }): Promise<${pascal}Entity>;
 }
 `,
-  [`${base}/repositories/InMemory/inMemory${pascal}Repository.ts`]: `import { randomUUID } from 'node:crypto';
+  [join(base, 'repositories', 'InMemory', `inMemory${pascal}Repository.ts`)]: `import { randomUUID } from 'node:crypto';
 import { ${pascal}Entity } from '../../domain/${camel}.entity.js';
 import { I${pascal}Repository } from '../${camel}Repository.interface.js';
 
@@ -88,7 +88,7 @@ export class InMemory${pascal}Repository implements I${pascal}Repository {
   }
 }
 `,
-  [`${base}/services/get${pascal}Service.ts`]: `import { ResourceNotFoundError } from '@/shared/core/errors/ResourceNotFoundError.js';
+  [join(base, 'services', `get${pascal}Service.ts`)]: `import { ResourceNotFoundError } from '@/shared/core/errors/ResourceNotFoundError.js';
 import { ${pascal}Entity } from '../domain/${camel}.entity.js';
 import { I${pascal}Repository } from '../repositories/${camel}Repository.interface.js';
 
@@ -109,7 +109,7 @@ export class Get${pascal}Service {
   }
 }
 `,
-  [`${base}/services/get${pascal}Service.spec.ts`]: `import { beforeEach, describe, expect, test } from 'vitest';
+  [join(base, 'services', `get${pascal}Service.spec.ts`)]: `import { beforeEach, describe, expect, test } from 'vitest';
 import { ResourceNotFoundError } from '@/shared/core/errors/ResourceNotFoundError.js';
 import { InMemory${pascal}Repository } from '../repositories/InMemory/inMemory${pascal}Repository.js';
 import { Get${pascal}Service } from './get${pascal}Service.js';
@@ -141,14 +141,14 @@ describe('Get ${pascal} Service', () => {
   });
 });
 `,
-  [`${base}/factories/makeGet${pascal}Service.ts`]: `import { Get${pascal}Service } from '../services/get${pascal}Service.js';
+  [join(base, 'factories', `makeGet${pascal}Service.ts`)]: `import { Get${pascal}Service } from '../services/get${pascal}Service.js';
 
 export function makeGet${pascal}Service(_tenantId: string): Get${pascal}Service {
   // TODO: import getTenantPrisma, implement Prisma${pascal}Repository, and wire it here.
   throw new Error('Implement Prisma${pascal}Repository and wire it here');
 }
 `,
-  [`${base}/http/dtos/${camel}.dto.ts`]: `import { z } from 'zod';
+  [join(base, 'http', 'dtos', `${camel}.dto.ts`)]: `import { z } from 'zod';
 
 export const ${camel}ResponseSchema = z.object({
   id: z.uuid(),
@@ -156,7 +156,7 @@ export const ${camel}ResponseSchema = z.object({
   tenantId: z.uuid(),
 });
 `,
-  [`${base}/http/${moduleName}.routes.ts`]: `import { FastifyInstance } from 'fastify';
+  [join(base, 'http', `${moduleName}.routes.ts`)]: `import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ensureAuthenticated } from '@/shared/infra/http/middlewares/ensureAuthenticated.js';
 import { ${camel}ResponseSchema } from './dtos/${camel}.dto.js';

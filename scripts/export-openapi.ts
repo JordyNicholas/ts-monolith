@@ -15,6 +15,7 @@ try {
   const formatted = await prettier.format(JSON.stringify(app.swagger()), {
     ...prettierConfig,
     parser: 'json',
+    endOfLine: 'lf',
   });
   await writeFile(outputPath, formatted, 'utf8');
   console.log(`OpenAPI schema exported to ${outputPath}`);

@@ -57,7 +57,9 @@ Make sure `DATABASE_URL` uses the database name `monolith_db` (the same value as
 docker compose up -d postgres
 ```
 
-Redis is optional for local development when `QUEUE_DRIVER=memory` (the default).
+Redis is optional for local development when `QUEUE_DRIVER=memory` and
+`TOKEN_REVOCATION_DRIVER=memory` (the defaults). Queue processing and token
+revocation can be configured independently.
 
 For the full stack (API container + Postgres + Redis + worker):
 

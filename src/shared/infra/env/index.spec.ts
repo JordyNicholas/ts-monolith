@@ -40,4 +40,13 @@ describe('production environment validation', () => {
 
     expect(result.success).toBe(false);
   });
+
+  test('rejects unsupported token revocation drivers', () => {
+    const result = validateEnv({
+      ...baseProductionEnv,
+      TOKEN_REVOCATION_DRIVER: 'database',
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
