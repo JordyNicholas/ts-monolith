@@ -25,13 +25,25 @@ cp .env.example .env
 
 Update `JWT_SECRET` in `.env` with a random string of at least 32 characters.
 
+On Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Make sure `DATABASE_URL` uses the database name `monolith_db` (the same value as
+`POSTGRES_DB` in `docker-compose.yml`). Using a different name (for example
+`ts_monolith`) will make `/ready` fail and registration return a database error.
+
 ### 3. Start PostgreSQL
 
 ```bash
-docker compose up -d
+docker compose up -d postgres
 ```
 
-For the full stack (API container + Postgres):
+Redis is optional for local development when `QUEUE_DRIVER=memory` (the default).
+
+For the full stack (API container + Postgres + Redis + worker):
 
 ```bash
 docker compose --profile full up -d --build
@@ -45,6 +57,9 @@ npm run db:migrate
 npm run db:seed
 ```
 
+`db:seed` creates the default tenant used by register/login when no
+`x-tenant-id` header is sent. Skip this step and registration will return `404 Tenant not found`.
+
 ### 5. Start the server
 
 ```bash
@@ -55,6 +70,13 @@ The API listens on `http://localhost:3333`.
 
 - OpenAPI docs: `http://localhost:3333/docs`
 - Metrics: `http://localhost:3333/metrics`
+- Readiness (`GET /ready`) confirms PostgreSQL connectivity before you try register/login
+
+### Windows notes
+
+- `npm run test:e2e` and `npm run openapi:export` are cross-platform (no POSIX-only `VAR=value` prefixes).
+- Prefer PowerShell or `cmd` from the repo root; Git Bash also works.
+- If Docker Desktop is running but Compose cannot bind port `5432`, stop any local PostgreSQL service first.
 
 ### 6. Try the API
 

@@ -5,7 +5,9 @@ import { buildApp } from '@/shared/infra/http/app.js';
 import { DEFAULT_TENANT_ID } from '@/shared/infra/env/constants.js';
 import { prisma } from '@/shared/infra/database/prisma.js';
 
-const runE2E = process.env.E2E_TESTS === 'true';
+// Prefer explicit E2E_TESTS=true; also run when invoked via `npm run test:e2e`
+// so the script works on Windows shells that do not support POSIX env assignment.
+const runE2E = process.env.E2E_TESTS === 'true' || process.env.npm_lifecycle_event === 'test:e2e';
 
 describe.runIf(runE2E)('E2E happy path', () => {
   let app: FastifyInstance;

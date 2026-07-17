@@ -1,7 +1,9 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
-import prettier from 'prettier';
-import { buildApp } from '../src/shared/infra/http/app.js';
+process.env.NODE_ENV = 'test';
+
+const { mkdir, writeFile } = await import('node:fs/promises');
+const { dirname, resolve } = await import('node:path');
+const { default: prettier } = await import('prettier');
+const { buildApp } = await import('../src/shared/infra/http/app.js');
 
 const outputPath = resolve(process.argv[2] ?? 'openapi/openapi.json');
 const app = await buildApp();
