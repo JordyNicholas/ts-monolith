@@ -2,6 +2,18 @@
 
 This repository implements a **strictly typed Modular Monolith architecture**. This document serves as the standard operating procedure for understanding the codebase, extending the application, and maintaining strict architectural boundaries.
 
+## Boilerplate guides
+
+- [First-day setup](docs/GETTING_STARTED.md)
+- [Fork and rename checklist](docs/FORKING.md)
+- [Security model](docs/SECURITY.md)
+- [Environment matrix](docs/ENVIRONMENTS.md)
+- [API contract workflow](docs/CONTRACTS.md)
+- [Testing strategy](docs/TESTING.md)
+- [Operations runbook](docs/OPERATIONS.md)
+- [Creating a module](docs/MODULES.md)
+- [Architecture decisions](docs/DECISIONS.md)
+
 ---
 
 ## Quickstart
@@ -16,6 +28,10 @@ This repository implements a **strictly typed Modular Monolith architecture**. T
 ```bash
 npm install
 ```
+
+For an automated local setup, run `npm run setup` after installation. It creates
+`.env` when absent, generates unique local JWT secrets, starts PostgreSQL,
+migrates and seeds. Continue at step 5 afterward.
 
 ### 2. Configure environment
 
@@ -48,6 +64,10 @@ For the full stack (API container + Postgres + Redis + worker):
 ```bash
 docker compose --profile full up -d --build
 ```
+
+The full profile runs with production validation. Provide unique non-demo
+`JWT_SECRET` and `JWT_REFRESH_SECRET` values in `.env` first; Compose refuses
+to start the API/worker profile without them.
 
 ### 4. Generate Prisma client and run migrations
 
@@ -135,22 +155,23 @@ npm run scaffold:module -- billing
 
 ### Available scripts
 
-| Script                    | Description                                    |
-| ------------------------- | ---------------------------------------------- |
-| `npm run dev`             | Start the server in watch mode                 |
-| `npm run dev:worker`      | Start the reports worker                       |
-| `npm run build`           | Compile TypeScript to `dist/`                  |
-| `npm start`               | Run the compiled server                        |
-| `npm test`                | Run unit + HTTP integration tests              |
-| `npm run test:e2e`        | Run full DB e2e happy-path (needs Postgres)    |
-| `npm run openapi:export`  | Export the Fastify OpenAPI contract            |
-| `npm run openapi:check`   | Fail if the committed contract is stale        |
-| `npm run scaffold:module` | Generate a new bounded-context module skeleton |
-| `npm run lint`            | Run ESLint + architecture boundary checks      |
-| `npm run typecheck`       | Type-check without emitting                    |
-| `npm run db:generate`     | Generate Prisma client                         |
-| `npm run db:migrate`      | Run database migrations                        |
-| `npm run db:seed`         | Seed the default tenant                        |
+| Script                    | Description                                     |
+| ------------------------- | ----------------------------------------------- |
+| `npm run setup`           | Configure local DB, Prisma, migrations and seed |
+| `npm run dev`             | Start the server in watch mode                  |
+| `npm run dev:worker`      | Start the reports worker                        |
+| `npm run build`           | Compile TypeScript to `dist/`                   |
+| `npm start`               | Run the compiled server                         |
+| `npm test`                | Run unit + HTTP integration tests               |
+| `npm run test:e2e`        | Run full DB e2e happy-path (needs Postgres)     |
+| `npm run openapi:export`  | Export the Fastify OpenAPI contract             |
+| `npm run openapi:check`   | Fail if the committed contract is stale         |
+| `npm run scaffold:module` | Generate a new bounded-context module skeleton  |
+| `npm run lint`            | Run ESLint + architecture boundary checks       |
+| `npm run typecheck`       | Type-check without emitting                     |
+| `npm run db:generate`     | Generate Prisma client                          |
+| `npm run db:migrate`      | Run database migrations                         |
+| `npm run db:seed`         | Seed the default tenant                         |
 
 ### Production queue (BullMQ + Redis)
 

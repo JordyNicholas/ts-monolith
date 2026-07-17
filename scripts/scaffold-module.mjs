@@ -60,7 +60,8 @@ const files = {
   [`${base}/repositories/${camel}Repository.interface.ts`]: `import { ${pascal}Entity } from '../domain/${camel}.entity.js';
 
 export interface I${pascal}Repository {
-  findById(id: string): Promise<${pascal}Entity | null>;
+  findById(id: string, tenantId: string): Promise<${pascal}Entity | null>;
+  create(data: { tenantId: string; name: string }): Promise<${pascal}Entity>;
 }
 `,
   [`${base}/repositories/InMemory/inMemory${pascal}Repository.ts`]: `import { randomUUID } from 'node:crypto';
@@ -70,8 +71,8 @@ import { I${pascal}Repository } from '../${camel}Repository.interface.js';
 export class InMemory${pascal}Repository implements I${pascal}Repository {
   public items: ${pascal}Entity[] = [];
 
-  public async findById(id: string): Promise<${pascal}Entity | null> {
-    return this.items.find((item) => item.id === id) ?? null;
+  public async findById(id: string, tenantId: string): Promise<${pascal}Entity | null> {
+    return this.items.find((item) => item.id === id && item.tenantId === tenantId) ?? null;
   }
 
   public async create(data: { tenantId: string; name: string }): Promise<${pascal}Entity> {
@@ -93,13 +94,14 @@ import { I${pascal}Repository } from '../repositories/${camel}Repository.interfa
 
 export interface Get${pascal}Request {
   id: string;
+  tenantId: string;
 }
 
 export class Get${pascal}Service {
   constructor(private readonly repository: I${pascal}Repository) {}
 
-  public async execute({ id }: Get${pascal}Request): Promise<${pascal}Entity> {
-    const entity = await this.repository.findById(id);
+  public async execute({ id, tenantId }: Get${pascal}Request): Promise<${pascal}Entity> {
+    const entity = await this.repository.findById(id, tenantId);
     if (!entity) {
       throw new ResourceNotFoundError('${pascal} not found');
     }
@@ -107,11 +109,42 @@ export class Get${pascal}Service {
   }
 }
 `,
-  [`${base}/factories/makeGet${pascal}Service.ts`]: `import { getTenantPrisma } from '@/shared/infra/database/prisma.js';
-import { Get${pascal}Service } from '../services/get${pascal}Service.js';
+  [`${base}/services/get${pascal}Service.spec.ts`]: `import { beforeEach, describe, expect, test } from 'vitest';
+import { ResourceNotFoundError } from '@/shared/core/errors/ResourceNotFoundError.js';
+import { InMemory${pascal}Repository } from '../repositories/InMemory/inMemory${pascal}Repository.js';
+import { Get${pascal}Service } from './get${pascal}Service.js';
+
+const TENANT_ID = '00000000-0000-4000-8000-000000000001';
+const OTHER_TENANT_ID = '00000000-0000-4000-8000-000000000002';
+
+let repository: InMemory${pascal}Repository;
+let sut: Get${pascal}Service;
+
+describe('Get ${pascal} Service', () => {
+  beforeEach(() => {
+    repository = new InMemory${pascal}Repository();
+    sut = new Get${pascal}Service(repository);
+  });
+
+  test('returns an entity from the active tenant', async () => {
+    const entity = await repository.create({ tenantId: TENANT_ID, name: 'Example' });
+
+    await expect(sut.execute({ id: entity.id, tenantId: TENANT_ID })).resolves.toEqual(entity);
+  });
+
+  test('does not expose an entity from another tenant', async () => {
+    const entity = await repository.create({ tenantId: TENANT_ID, name: 'Example' });
+
+    await expect(
+      sut.execute({ id: entity.id, tenantId: OTHER_TENANT_ID }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError);
+  });
+});
+`,
+  [`${base}/factories/makeGet${pascal}Service.ts`]: `import { Get${pascal}Service } from '../services/get${pascal}Service.js';
 
 export function makeGet${pascal}Service(_tenantId: string): Get${pascal}Service {
-  // TODO: wire Prisma${pascal}Repository when persistence is needed
+  // TODO: import getTenantPrisma, implement Prisma${pascal}Repository, and wire it here.
   throw new Error('Implement Prisma${pascal}Repository and wire it here');
 }
 `,
@@ -158,7 +191,9 @@ console.log(`✅ Scaffolded module: ${moduleName}`);
 console.log(`   Path: ${base}`);
 console.log('');
 console.log('Next steps:');
-console.log(`  1. Add Prisma model + migration if persistence is needed`);
-console.log(`  2. Implement Prisma${pascal}Repository`);
-console.log(`  3. Register routes in src/shared/infra/http/app.ts`);
+console.log(`  1. Tailor the generated entity, service and passing tenant-isolation tests`);
+console.log(`  2. Add a Prisma model + migration if persistence is needed`);
+console.log(`  3. Implement Prisma${pascal}Repository and wire the factory`);
+console.log(`  4. Register routes in src/shared/infra/http/app.ts`);
 console.log(`     app.register(${camel}Routes, { prefix: '/${moduleName}' });`);
+console.log(`  5. Export OpenAPI and sync downstream clients`);

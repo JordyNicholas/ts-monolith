@@ -3,8 +3,15 @@
   "version": "1.0.0",
   "description": "Monolith boilerplate using TypeScript",
   "main": "index.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "overrides": {
+    "@hono/node-server": "^1.19.13"
+  },
   "scripts": {
     "prepare": "husky",
+    "setup": "node scripts/setup.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && npm run lint:architecture",
     "lint:architecture": "depcruise \"src/**/*.ts\" --config dependency-cruiser.config.mjs",

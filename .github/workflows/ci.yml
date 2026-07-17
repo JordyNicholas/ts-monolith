@@ -24,6 +24,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       DATABASE_URL: postgresql://user:password@localhost:5432/monolith_db
@@ -32,6 +41,7 @@ jobs:
       DEFAULT_TENANT_ID: 00000000-0000-4000-8000-000000000001
       QUEUE_DRIVER: memory
       E2E_TESTS: 'true'
+      REDIS_TESTS: 'true'
 
     steps:
       - name: Checkout
@@ -45,6 +55,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Generate Prisma client
         run: npm run db:generate
@@ -60,6 +73,13 @@ jobs:
 
       - name: Verify committed OpenAPI contract
         run: npm run openapi:check
+
+      - name: Publish validated OpenAPI contract
+        uses: actions/upload-artifact@v4
+        with:
+          name: ts-monolith-openapi
+          path: openapi/openapi.json
+          if-no-files-found: error
 
       - name: Lint
         run: npm run lint

@@ -42,7 +42,10 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/monolith_db
       REDIS_URL: redis://redis:6379
       QUEUE_DRIVER: bullmq
-      JWT_SECRET: change-me-to-a-long-random-secret-at-least-32-chars
+      # Production validation rejects demo secrets. Provide unique values via .env.
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env before using --profile full}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Set JWT_REFRESH_SECRET in .env before using --profile full}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
       DEFAULT_TENANT_ID: 00000000-0000-4000-8000-000000000001
     ports:
       - '3333:3333'
@@ -65,7 +68,9 @@ services:
       DATABASE_URL: postgresql://user:password@postgres:5432/monolith_db
       REDIS_URL: redis://redis:6379
       QUEUE_DRIVER: bullmq
-      JWT_SECRET: change-me-to-a-long-random-secret-at-least-32-chars
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env before using --profile full}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?Set JWT_REFRESH_SECRET in .env before using --profile full}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
       DEFAULT_TENANT_ID: 00000000-0000-4000-8000-000000000001
     command: node dist/workers/reports.worker.js
 
