@@ -116,3 +116,18 @@ Short ADRs for boilerplate consumers. When you fork this repo, update these as y
 **Why:** Local dev without Postgres still runs unit/integration tests; CI proves real wiring.
 
 **Trade-off:** Developers must set the flag locally to run e2e manually.
+
+---
+
+## ADR-012: Compose `POSTGRES_*` + matching `DATABASE_URL`
+
+**Decision:** Local Postgres credentials are declared once as `POSTGRES_USER` /
+`POSTGRES_PASSWORD` / `POSTGRES_DB` / `POSTGRES_HOST_PORT`. `DATABASE_URL` must
+mirror them. `npm run db:check-env` fails fast on mismatch. Production uses a
+managed DB secret with TLS and does not rely on Compose bootstrap vars.
+
+**Why:** Divergent `.env` halves cause Prisma `P1000` auth failures that look
+like application bugs.
+
+**Trade-off:** Developers must update both sides (or reset the volume) when
+changing local DB credentials.

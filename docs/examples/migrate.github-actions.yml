@@ -1,0 +1,34 @@
+# Example release job — copy into .github/workflows/ and wire to your host.
+# Runs migrations once per deploy with a migrator DATABASE_URL secret.
+# Keep this separate from API replicas so migrate deploy is not raced.
+
+name: Migrate
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      # Prefer a migrator role (DDL) distinct from the runtime app role (DML).
+      DATABASE_URL: ${{ secrets.DATABASE_URL_MIGRATOR }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npx prisma migrate deploy
+
+      # Seed is intentional and rare in production — do not run the demo seed here.
+      # - run: npm run db:seed

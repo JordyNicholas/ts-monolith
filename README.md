@@ -47,9 +47,9 @@ On Windows PowerShell:
 Copy-Item .env.example .env
 ```
 
-Make sure `DATABASE_URL` uses the database name `monolith_db` (the same value as
-`POSTGRES_DB` in `docker-compose.yml`). Using a different name (for example
-`ts_monolith`) will make `/ready` fail and registration return a database error.
+Keep `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` / `POSTGRES_HOST_PORT`
+aligned with `DATABASE_URL` (see `.env.example`). `npm run db:check-env` fails
+fast if they drift — a common cause of Prisma `P1000` auth errors.
 
 ### 3. Start PostgreSQL
 

@@ -24,12 +24,25 @@ module.
 
 1. Back up the database when required by the migration risk.
 2. Run `npm run db:generate` during build.
-3. Run `npx prisma migrate deploy` as a single deployment job.
-4. Deploy API instances.
+3. Run `npx prisma migrate deploy` as a **single** deployment job with
+   `DATABASE_URL_MIGRATOR` (see [examples/migrate.github-actions.yml](examples/migrate.github-actions.yml)).
+4. Deploy API instances with the runtime `DATABASE_URL` (app role).
 5. Deploy workers using the same application version.
 6. Verify `/health`, `/ready`, representative API calls and queue processing.
 
-Avoid running migrations concurrently from every API replica.
+Avoid running migrations concurrently from every API replica. Prefer a managed
+database over Compose Postgres in production. Never reset production data with
+`docker compose down -v`.
+
+### Credential roles
+
+| Role     | Secret                  | Capabilities                       |
+| -------- | ----------------------- | ---------------------------------- |
+| Migrator | `DATABASE_URL_MIGRATOR` | `prisma migrate deploy` only       |
+| App      | `DATABASE_URL`          | API/worker queries; no routine DDL |
+
+Local Compose can keep one shared `user`/`password` pair; production should
+split these roles when the host allows it.
 
 ## Health signals
 

@@ -59,10 +59,60 @@ const envSchema = z
         message: 'CORS_ORIGIN must be an explicit allowlist in production',
       });
     }
+
+    if (isDemoDatabaseUrl(value.DATABASE_URL)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['DATABASE_URL'],
+        message:
+          'DATABASE_URL must not use the local Compose demo credentials (user/password@localhost) in production',
+      });
+    }
+
+    if (!databaseUrlRequiresSsl(value.DATABASE_URL)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['DATABASE_URL'],
+        message: 'DATABASE_URL must enable TLS in production (sslmode=require or ssl=true)',
+      });
+    }
   });
 
 export function validateEnv(input: NodeJS.ProcessEnv) {
   return envSchema.safeParse(input);
+}
+
+function isDemoDatabaseUrl(databaseUrl: string): boolean {
+  try {
+    const url = new URL(databaseUrl);
+    const user = decodeURIComponent(url.username);
+    const password = decodeURIComponent(url.password);
+    const host = url.hostname.toLowerCase();
+    return (
+      user === 'user' && password === 'password' && (host === 'localhost' || host === '127.0.0.1')
+    );
+  } catch {
+    return false;
+  }
+}
+
+function databaseUrlRequiresSsl(databaseUrl: string): boolean {
+  try {
+    const url = new URL(databaseUrl);
+    // Docker Compose service DNS on the private network has no TLS termination.
+    if (url.hostname === 'postgres') return true;
+
+    const sslMode = (url.searchParams.get('sslmode') ?? '').toLowerCase();
+    const ssl = (url.searchParams.get('ssl') ?? '').toLowerCase();
+    return (
+      ssl === 'true' ||
+      sslMode === 'require' ||
+      sslMode === 'verify-ca' ||
+      sslMode === 'verify-full'
+    );
+  } catch {
+    return false;
+  }
 }
 
 const _env = validateEnv(process.env);

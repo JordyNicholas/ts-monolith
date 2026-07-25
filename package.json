@@ -27,9 +27,11 @@
     "openapi:export": "tsx scripts/export-openapi.ts",
     "openapi:check": "npm run openapi:export && git diff --exit-code -- openapi/openapi.json",
     "scaffold:module": "node scripts/scaffold-module.mjs",
+    "db:check-env": "node scripts/check-db-env.mjs",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:seed": "prisma db seed",
+    "db:migrate": "npm run db:check-env && prisma migrate dev",
+    "db:migrate:deploy": "npm run db:check-env && prisma migrate deploy",
+    "db:seed": "npm run db:check-env && prisma db seed",
     "tree": "npx tree-node-cli --dirs-first --exclude \"node_modules|dist|client|\\.git\""
   },
   "keywords": [],

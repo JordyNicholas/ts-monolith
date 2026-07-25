@@ -44,8 +44,9 @@ npm run db:seed
 npm run dev
 ```
 
-Replace the example `JWT_SECRET` before starting the API. PostgreSQL must use
-the `monolith_db` database configured by Compose.
+Replace the example `JWT_SECRET` before starting the API. Keep `POSTGRES_*` and
+`DATABASE_URL` aligned (same user, password, database and port). If they drift,
+`npm run db:check-env` fails before migrate/seed with a clear mismatch error.
 
 ## Verify the installation
 
