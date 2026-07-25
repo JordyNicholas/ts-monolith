@@ -91,7 +91,7 @@ export function globalErrorHandler(
     request.log.error(error);
     return reply.status(503).send({
       message:
-        'Database is unavailable. Confirm PostgreSQL is running and DATABASE_URL matches docker-compose (monolith_db).',
+        'Database is unavailable. Confirm PostgreSQL is running and DATABASE_URL matches POSTGRES_* (see npm run db:check-env).',
     });
   }
 

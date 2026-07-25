@@ -73,9 +73,20 @@ registration and password recovery.
 Review data classification, retention, deletion, encryption and backup restore
 requirements for the product domain.
 
+## Database credentials
+
+- Local: `POSTGRES_*` bootstraps Compose; `DATABASE_URL` must match
+  ([Environments](ENVIRONMENTS.md)).
+- Production: managed Postgres, TLS required on `DATABASE_URL`, secrets from a
+  vault — never the Compose demo `user`/`password`.
+- Prefer a migrator URL for release jobs and a least-privilege app URL for
+  runtime.
+
 ## Pre-deployment checklist
 
 - [ ] Unique production JWT and refresh secrets
+- [ ] Production `DATABASE_URL` with TLS (not local demo credentials)
+- [ ] Migrations run once per release (not on every replica boot)
 - [ ] Explicit production CORS allowlist
 - [ ] HTTPS enforced by the platform
 - [ ] Secure browser session and CSRF strategy

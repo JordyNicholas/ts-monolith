@@ -36,6 +36,30 @@ if (!envExists) {
   'CORS_ORIGIN',
   'http://localhost:3000',
 ));
+({ contents: envContents, changed: envChanged } = ensureSetting(
+  envContents,
+  envChanged,
+  'POSTGRES_USER',
+  'user',
+));
+({ contents: envContents, changed: envChanged } = ensureSetting(
+  envContents,
+  envChanged,
+  'POSTGRES_PASSWORD',
+  'password',
+));
+({ contents: envContents, changed: envChanged } = ensureSetting(
+  envContents,
+  envChanged,
+  'POSTGRES_DB',
+  'monolith_db',
+));
+({ contents: envContents, changed: envChanged } = ensureSetting(
+  envContents,
+  envChanged,
+  'POSTGRES_HOST_PORT',
+  '5432',
+));
 
 if (envChanged) {
   await writeFile(envPath, envContents.endsWith('\n') ? envContents : `${envContents}\n`, 'utf8');
@@ -44,6 +68,7 @@ if (envChanged) {
   console.log('Existing .env is ready.');
 }
 
+run(npmCommand(), ['run', 'db:check-env']);
 run('docker', ['compose', 'up', '-d', 'postgres']);
 run(npmCommand(), ['run', 'db:generate']);
 run(npmCommand(), ['run', 'db:migrate']);

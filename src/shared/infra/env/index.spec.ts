@@ -3,7 +3,7 @@ import { validateEnv } from './index.js';
 
 const baseProductionEnv = {
   NODE_ENV: 'production',
-  DATABASE_URL: 'postgresql://user:password@localhost:5432/monolith_db',
+  DATABASE_URL: 'postgresql://app:strong-secret@db.example.com:5432/monolith?sslmode=require',
   JWT_SECRET: 'production-access-secret-with-at-least-32-characters',
   JWT_REFRESH_SECRET: 'production-refresh-secret-with-at-least-32-characters',
   CORS_ORIGIN: 'https://app.example.com',
@@ -12,6 +12,14 @@ const baseProductionEnv = {
 describe('production environment validation', () => {
   test('accepts independent secrets and an explicit CORS allowlist', () => {
     expect(validateEnv(baseProductionEnv).success).toBe(true);
+  });
+
+  test('accepts ssl=true as an alternative TLS flag', () => {
+    const result = validateEnv({
+      ...baseProductionEnv,
+      DATABASE_URL: 'postgresql://app:strong-secret@db.example.com:5432/monolith?ssl=true',
+    });
+    expect(result.success).toBe(true);
   });
 
   test('rejects the documented demo access secret', () => {
@@ -45,6 +53,24 @@ describe('production environment validation', () => {
     const result = validateEnv({
       ...baseProductionEnv,
       TOKEN_REVOCATION_DRIVER: 'database',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  test('rejects local Compose demo database credentials', () => {
+    const result = validateEnv({
+      ...baseProductionEnv,
+      DATABASE_URL: 'postgresql://user:password@localhost:5432/monolith_db?sslmode=require',
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  test('rejects production DATABASE_URL without TLS', () => {
+    const result = validateEnv({
+      ...baseProductionEnv,
+      DATABASE_URL: 'postgresql://app:strong-secret@db.example.com:5432/monolith',
     });
 
     expect(result.success).toBe(false);
