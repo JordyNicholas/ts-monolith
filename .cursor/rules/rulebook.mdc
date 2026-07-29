@@ -1,0 +1,26 @@
+---
+description: Architecture smells, optimisation, and token hygiene for this boilerplate
+alwaysApply: true
+---
+
+# ts-monolith agent defaults
+
+Follow [docs/RULEBOOK.md](docs/RULEBOOK.md). Keep this rule short on purpose (always-on tokens).
+
+## Code
+
+- Services: interfaces only — never Prisma, Fastify, or queue clients.
+- Routes: Zod validate → factory → response; no domain branching in HTTP.
+- Cross-module data: owning module’s interface/service only.
+- Domain failures: `AppError` subclasses, not bare `Error`.
+- External libs: `shared/providers/` contracts; wire in factories.
+- Tenant-owned data: scoped access + isolation tests.
+- Prefer `scaffold:module`; run `lint:architecture` after new deps.
+- HTTP contract changes: export/check OpenAPI; no duplicated FE/BE shapes.
+
+## Tokens / chat
+
+- One task per chat; hand off with goal + `@` files / short plan — don’t archive in-thread.
+- `/summarize` between phases; don’t paste large logs/diffs (use paths).
+- Explore in Ask/subagent; implement in a clean thread.
+- Prefer Plan mode before multi-file thrash; stop and restart if stuck.
