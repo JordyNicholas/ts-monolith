@@ -1,13 +1,14 @@
 ---
-description: Architecture smells, optimisation, and token hygiene for this boilerplate
+description: ts-monolith-specific architecture constraints (portable standards are user rules)
 alwaysApply: true
 ---
 
 # ts-monolith agent defaults
 
-Follow [docs/RULEBOOK.md](docs/RULEBOOK.md). Keep this rule short on purpose (always-on tokens).
+Portable rulebook: Cursor user rule “Global rulebook (all projects)” (every workspace, including new repos).
+Repo detail: [docs/RULEBOOK.md](docs/RULEBOOK.md). Keep this file short (always-on tokens).
 
-## Code
+## Code (this repo)
 
 - Services: interfaces only — never Prisma, Fastify, or queue clients.
 - Routes: Zod validate → factory → response; no domain branching in HTTP.
@@ -17,10 +18,3 @@ Follow [docs/RULEBOOK.md](docs/RULEBOOK.md). Keep this rule short on purpose (al
 - Tenant-owned data: scoped access + isolation tests.
 - Prefer `scaffold:module`; run `lint:architecture` after new deps.
 - HTTP contract changes: export/check OpenAPI; no duplicated FE/BE shapes.
-
-## Tokens / chat
-
-- One task per chat; hand off with goal + `@` files / short plan — don’t archive in-thread.
-- `/summarize` between phases; don’t paste large logs/diffs (use paths).
-- Explore in Ask/subagent; implement in a clean thread.
-- Prefer Plan mode before multi-file thrash; stop and restart if stuck.

@@ -13,7 +13,7 @@ This repository implements a **strictly typed Modular Monolith architecture**. T
 - [Operations runbook](docs/OPERATIONS.md)
 - [Creating a module](docs/MODULES.md)
 - [Architecture decisions](docs/DECISIONS.md)
-- [Rule book — smells, practices, optimisation, token hygiene](docs/RULEBOOK.md)
+- [Rule book — monolith-specific smells & practices](docs/RULEBOOK.md) (portable defaults: Cursor user rule “Global rulebook (all projects)”)
 
 ---
 

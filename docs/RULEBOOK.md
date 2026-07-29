@@ -2,6 +2,8 @@
 
 Living standards for this boilerplate: **code smells → practices**, **code optimisation**, and **token/context hygiene** when working with AI agents in Cursor.
 
+**Scope:** The portable rulebook is the Cursor **user rule** “Global rulebook (all projects)” — it applies in every workspace, including new empty repos. This file only adds **ts-monolith-specific** detail (Fastify, Prisma, modules, OpenAPI, architecture lint). Prefer the stricter of the two when both apply.
+
 Use this file as the checklist for reviews, scaffolding, and long agent sessions. Architecture mechanics stay in the [README](../README.md); decisions stay in [DECISIONS.md](./DECISIONS.md).
 
 ---
@@ -71,9 +73,9 @@ Conversation history dominates Usage Context. Keep agent threads lean so each tu
 7. **Persist outside chat.** Write decisions/checklists to `docs/` or a short plan file; resume via `@` instead of replaying tool residue.
 8. **Stop and restart when stuck.** A tighter new prompt beats 10 corrective messages in a bloated thread.
 
-### What _not_ to put in always-on rules
+### What _not_ to put in always-on project rules
 
-Long always-apply rules increase the fixed Rules bucket on every turn. Keep Cursor rules short; put detail here and in the README. Prefer modular `.cursor/rules/` with globs over one giant always-on file.
+Long always-apply project rules increase the fixed Rules bucket on every turn. Keep `.cursor/rules/` short and repo-specific. Portable guidance belongs in the **user rule** (global); deep monolith detail belongs here and in the README.
 
 ### Agent-facing defaults for this repo
 
